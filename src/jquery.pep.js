@@ -772,15 +772,20 @@
     // log our positions
     this.log({ type: "pos-coords", x: this.pos.x, y: this.pos.y});
 
-    if ( $.isArray( this.options.constrainTo ) ) {
+    if ($.isArray(this.options.constrainTo) || Object.prototype.toString.call(this.options.constrainTo) == '[object Function]') {
 
-      if ( this.options.constrainTo[3] !== undefined && this.options.constrainTo[1] !== undefined ) {
-        upperXLimit     = this.options.constrainTo[1] === false ?  Infinity : this.options.constrainTo[1];
-        lowerXLimit     = this.options.constrainTo[3] === false ? -Infinity : this.options.constrainTo[3];
+    	var constraints = this.options.constrainTo;
+    	if (Object.prototype.toString.call(this.options.constrainTo) == '[object Function]') {
+    		constraints = this.options.constrainTo.call();
+    	}
+
+    	if (constraints[3] !== undefined && constraints[1] !== undefined) {
+    		upperXLimit = constraints[1] === false ? Infinity : constraints[1];
+    		lowerXLimit = constraints[3] === false ? -Infinity : constraints[3];
       }
-      if ( this.options.constrainTo[0] !== false && this.options.constrainTo[2] !== false ) {
-        upperYLimit       = this.options.constrainTo[2] === false ?  Infinity : this.options.constrainTo[2];
-        lowerYLimit       = this.options.constrainTo[0] === false ? -Infinity : this.options.constrainTo[0];
+    	if (constraints[0] !== false && constraints[2] !== false) {
+      	upperYLimit = constraints[2] === false ? Infinity : constraints[2];
+      	lowerYLimit = constraints[0] === false ? -Infinity : constraints[0];
       }
 
       // is our object trying to move outside lower X & Y limits?
